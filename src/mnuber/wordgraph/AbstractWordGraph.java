@@ -34,8 +34,8 @@ public abstract class AbstractWordGraph {
 	protected int totalUniqueWords = 0;
 
 	/*Exclude small words that often have a very high count*/
-	protected String excludedWords = " ,\n,at,the,than,a,then,in,on,off,this"
-			+ ",that,of,or,and,but,too,to,was,were,by,as,also";
+	protected String excludedWords = " ,\n,applause,t,ts,re,ve,at,the,than,a,then,in,on,off,this,"
+			+ ",that,of,or,and,but,ll,too,to,was,[,],pp,had,jump,up,were,by,are,from,as,also,is,with,he,if,t,";
 	
 	/**
 	 * Constructor 
@@ -62,7 +62,7 @@ public abstract class AbstractWordGraph {
 	 */
 	protected void parseFile(File file) {
 		ArrayList<String> wordList = new ArrayList<String>();
-		String regexPattern = "[a-zA-z']+";
+		String regexPattern = "[a-zA-Z]+";
 		Pattern pattern = Pattern.compile(regexPattern);
 		Matcher matcher = null;
 		Scanner fileInput = null;
@@ -71,8 +71,10 @@ public abstract class AbstractWordGraph {
 			fileInput = new Scanner(file);
 			while(fileInput.hasNextLine()) {
 				matcher = pattern.matcher(fileInput.nextLine());
-				while(matcher.find())
-					wordList.add(matcher.group().toUpperCase().replace("'", ""));
+				while(matcher.find()){
+					if(matcher.group().length()>1)
+						wordList.add(matcher.group().toUpperCase().replace("'", ""));
+				}
 			}
 		} catch (FileNotFoundException e) {
 			System.out.println(file.toString() + " was not found.\nMake sure it exists.");
@@ -103,22 +105,28 @@ public abstract class AbstractWordGraph {
 			String currentWord = wordList.get(0);
 			int count = 0;
 			for(String word : wordList) {
+				System.out.print(word + " " + currentWord + " " + word.equals(currentWord));
 				if(word.equals(currentWord)) {
 					count++;
 					currentWord = word;
+					System.out.println(" ");
 				}
 				else {
 					if(!currentWord.equals(""))
 						wordMapList.add(new Word(currentWord, count));
+					System.out.println(word);
+
 					count = 1;
 					currentWord = word;
 				}
 
 			}
 			wordMapList.add(new Word(currentWord, count));
-			totalUniqueWords = wordMapList.size();
 			//Change the sort from alpha to count
 			Collections.sort(wordMapList);
+			totalUniqueWords = wordMapList.size();
+			
+
 
 		}
 		else {
@@ -142,7 +150,7 @@ public abstract class AbstractWordGraph {
 		graphics.setRenderingHint(
 		        RenderingHints.KEY_TEXT_ANTIALIASING,
 		        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-		render(graphics, imageHeight, imageWidth);
+		render(graphics, imageWidth, imageHeight);
 		try {
 			String randomFileName = "img" + Calendar.getInstance().getTimeInMillis() + ".png";
 			ImageIO.write(image, "png", new File(randomFileName));

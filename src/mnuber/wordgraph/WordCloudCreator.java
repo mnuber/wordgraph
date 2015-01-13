@@ -8,6 +8,8 @@ public class WordCloudCreator {
 
 	public static void main (String[] args){
 		WordCloud cloud = new WordCloud();
-		cloud.renderCloud(800, 600, 120, 80);
+		cloud.excludedWords += "Applause";
+		cloud.renderCloud(330*24,330*36, 1600, 200);
 	}
 }
+
